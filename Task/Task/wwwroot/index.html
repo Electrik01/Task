@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Вход</title>
+    <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="styles/main.css" rel="stylesheet" />
+    <script src="scripts/auth.js"></script>
+
+</head>
+<body>
+    <div id="errors" class="alert alert-danger" style="display:none;"></div>
+    <form class="container w-25 bg-light" name="userForm">
+        <input type="hidden" name="id" value="0" />
+        <div class="form-group">
+            <label for="login">Логин:</label>
+            <input class="form-control" required  id="login" />
+        </div>
+        <div class="form-group">    
+            <label for="password">Пароль:</label>
+            <input class="form-control" required  id="password" type="password" />
+        </div>
+        <div class="panel-body">
+            <button type="submit" id="submitLogin" class="btn btn-dark">Войти</button>
+        </div>
+        <div class="form-group">
+            <a href="registration.html" class="float-right" id="reg">Регистрация</a>
+        </div>
+    </form>
+    <script>
+        var tokenKey = "accessToken";
+        document.forms["userForm"].addEventListener("submit", e => {
+            e.preventDefault();
+            getTokenAsync();
+        });
+        function addError(errors) {
+            errors.forEach(error => {
+                const p = document.createElement("p");
+                p.append(error);
+                document.getElementById("errors").append(p);
+            });
+        }
+    </script>
+</body>
+
+</html>

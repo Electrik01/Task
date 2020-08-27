@@ -1,0 +1,12 @@
+﻿.container {
+    margin-top:100px;
+    padding:10px;
+    border-radius:5px;
+}
+.panel-body{
+    text-align:center;
+}
+button {
+    width:40%;
+    margin: auto;
+}

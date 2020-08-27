@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Регистрация</title>
+    <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="styles/main.css" rel="stylesheet" />
+    <script src="scripts/auth.js"></script>
+</head>
+<body>
+    <div id="errors" class="alert alert-danger" style="display:none;"></div>
+    <form class="container w-25 bg-light" name="userForm">
+        <div class="form-group">
+            <label for="name">Имя:</label>
+            <input class="form-control" required  name="name" id="name" />
+        </div>
+        <div class="form-group">
+            <label for="login">Логин:</label>
+            <input class="form-control" required  name="login" id="login" />
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input class="form-control"required  name="password" type="password" id="password" />
+        </div>
+        <div class="form-group">
+            <label for="passwordR">Подтверждение пароля:</label>
+            <input class="form-control" required name="passwordR" type="password" id="passwordR" />
+        </div>
+        <div class="panel-body">
+            <button type="submit" id="submit" class="btn btn-dark">Создать</button>
+        </div>
+        <div class="form-group">
+            <a href="index.html" class="float-right" id="reg">Войти</a>
+        </div>
+    </form>
+    <script>
+        var tokenKey = "accessToken";
+        window.onload = function () {
+            document.getElementById("password").onchange = validatePassword;
+            document.getElementById("passwordR").onchange = validatePassword;
+        }
+        function validatePassword() {
+            var pass2 = document.getElementById("passwordR").value;
+            var pass1 = document.getElementById("password").value;
+            if (pass1 != pass2)
+                document.getElementById("passwordR").setCustomValidity("Пароли не совпадают");
+            else
+                document.getElementById("passwordR").setCustomValidity('');
+            //empty string means no validation error
+        }
+        async function CreateUser(uName, uLogin, uPassword) {
+            const response = await fetch("api/values", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: uName,
+                    password: uPassword,
+                    login: uLogin
+                    
+                })
+            });
+            if (response.ok === true) {
+                getTokenAsync();
+            } else {
+                const errorData = await response.json();
+                console.log("errors", errorData);
+                if (errorData) {
+                    let err = document.getElementById("errors");
+                    while (err.firstChild) {
+                        err.removeChild(err.firstChild);
+                    }
+                    if (errorData.errors) {
+                        if (errorData.errors["Name"]) {
+                            addError(errorData.errors["Name"]);
+                        }
+                        if (errorData.errors["Login"]) {
+                            addError(errorData.errors["Login"]);
+                        }
+                        if (errorData.errors["Password"]) {
+                            addError(errorData.errors["Password"]);
+                        }
+                    }
+                    if (errorData["Login"]) {
+                        addError(errorData["Login"]);
+                    }
+                }
+
+                document.getElementById("errors").style.display = "block";
+            }
+        }
+            
+        document.forms["userForm"].addEventListener("submit", e => {
+            e.preventDefault();
+            const form = document.forms["userForm"];
+            const uName = form.elements["name"].value;
+            const uLogin = form.elements["login"].value;
+            const uPassword = form.elements["password"].value;
+            CreateUser(uName, uLogin, uPassword);
+        });
+
+        function addError(errors) {
+            errors.forEach(error => {
+                const p = document.createElement("p");
+                p.append(error);
+                document.getElementById("errors").append(p);
+            });
+        }
+    </script>
+</body>
+</html>
